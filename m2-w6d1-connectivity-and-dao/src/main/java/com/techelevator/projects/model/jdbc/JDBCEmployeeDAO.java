@@ -81,7 +81,8 @@ public class JDBCEmployeeDAO implements EmployeeDAO {
 	@Override
 	public List<Employee> getEmployeesByProjectId(Long projectId) {
 		ArrayList<Employee> employee = new ArrayList<>();
-		String sqlGetEmployeesByProjectId = "SELECT * FROM project_employee " +
+		String sqlGetEmployeesByProjectId = "SELECT * FROM project_employee " + 
+											"JOIN employee ON employee.employee_id = project_employee.employee_id " + 
 										"WHERE project_id = ?";   
 		SqlRowSet results = jdbcTemplate.queryForRowSet(sqlGetEmployeesByProjectId, projectId);
 		while(results.next()) {
