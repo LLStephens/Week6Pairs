@@ -71,16 +71,18 @@ public class JDBCDepartmentDAO implements DepartmentDAO {
 
 	@Override
 	public Department getDepartmentById(Long id) {
-		Department department = new Department();
 		String sqlGetDepartmentById = "SELECT department_id, name " +
 										"FROM department " +
 										"WHERE department_id = ?";
 		SqlRowSet results = jdbcTemplate.queryForRowSet(sqlGetDepartmentById, id);
-		department.setName(results.getString("name"));
-		return department;
-		
-		
+		if(results.next()) {
+			Department department = mapRowToDepartment(results);
+			return department;
+		} else {
+			return null;
+		}
 	}
+	
 	
 	private Department mapRowToDepartment(SqlRowSet results) {
 		Department theDepartment;
@@ -88,6 +90,13 @@ public class JDBCDepartmentDAO implements DepartmentDAO {
 		theDepartment.setId(results.getLong("department_id"));
 		theDepartment.setName(results.getString("name"));
 		return theDepartment;
+	}
+
+	@Override
+	public void deleteDepartmentById(Long departmentId) {
+		String sqlRemoveDepartment = "DELETE FROM department WHERE department_id = ?";
+		jdbcTemplate.update(sqlRemoveDepartment, departmentId);
+		
 	}
 
 	

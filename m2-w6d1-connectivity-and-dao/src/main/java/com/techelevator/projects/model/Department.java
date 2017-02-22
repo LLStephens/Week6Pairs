@@ -24,4 +24,16 @@ public class Department {
 	public String toString() {
 		return this.name;
 	}
+	
+	@Override
+	public boolean equals(Object other) {
+		if(other == null) {
+			return false;
+		} else if(!(other instanceof Department)) {
+			return false;
+		} else {
+			Department otherDept = (Department)other;
+			return this.id.equals(otherDept.id) && this.name.equals(otherDept.name);
+		}
+	}
 }

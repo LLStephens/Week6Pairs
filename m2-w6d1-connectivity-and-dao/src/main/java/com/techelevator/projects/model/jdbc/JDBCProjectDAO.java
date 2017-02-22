@@ -9,6 +9,7 @@ import javax.sql.DataSource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 
+import com.techelevator.projects.model.Department;
 import com.techelevator.projects.model.Project;
 import com.techelevator.projects.model.ProjectDAO;
 
@@ -18,6 +19,19 @@ public class JDBCProjectDAO implements ProjectDAO {
 
 	public JDBCProjectDAO(DataSource dataSource) {
 		this.jdbcTemplate = new JdbcTemplate(dataSource);
+	}
+	@Override 
+	public Project createProject(String projectName) {
+		Long id = getNextProjectId();
+		String sqlCreateProject = "INSERT into project " +
+				" (project_id, name) VALUES (?, ?)";	
+		jdbcTemplate.update(sqlCreateProject, id, projectName);
+		
+		Project theProject = new Project();
+		theProject.setId(id);
+		theProject.setName(projectName);
+		
+		return theProject;
 	}
 	
 	@Override
@@ -33,6 +47,19 @@ public class JDBCProjectDAO implements ProjectDAO {
 
 		}
 		return project;
+	}
+	
+	@Override
+	public Project getProjectById(Long projectId) {
+	
+		String sqlGetProjectById = "SELECT project_id, name, from_date, to_date FROM project WHERE project_id = ?";
+		SqlRowSet results = jdbcTemplate.queryForRowSet(sqlGetProjectById, projectId);
+		if(results.next()){
+			Project theProject = mapRowToProject(results);
+			return theProject;
+		} else {
+		return null;
+		}
 	}
 
 
@@ -65,8 +92,23 @@ public class JDBCProjectDAO implements ProjectDAO {
 
 		return theProject;
 	}
+
+	@Override
+	public void removeProject(Long projectId) {
+		String sqlRemoveProject = "DELETE FROM project WHERE project_id = ?";
+		jdbcTemplate.update(sqlRemoveProject, projectId);		
+	}
 	
 	
+	
+	private long getNextProjectId() {
+		SqlRowSet nextIdResult = jdbcTemplate.queryForRowSet("SELECT nextval('seq_project_id')");
+		if(nextIdResult.next()) {
+			return nextIdResult.getLong(1);
+		} else {
+			throw new RuntimeException("Something went wrong while getting an id for the new project");
+		}
+	}
 	
 	
 	
