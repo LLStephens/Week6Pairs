@@ -15,7 +15,6 @@ public interface EmployeeDAO {
 	public List<Employee> getEmployeesByProjectId(Long projectId); //incomplete
 	//Update
 	public void changeEmployeeDepartment(Long employeeId, Long departmentId); //incomplete
-	public void assignEmployeeDepartment(Long employeeId, Long departmentId);
 	//Delete
 	public void removeEmployee(Long employeeId);
 	
