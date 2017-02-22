@@ -35,4 +35,15 @@ public class Project {
 	public String toString() {
 		return name;
 	}
+	@Override
+	public boolean equals(Object other) {
+		if(other == null) {
+			return false;
+		} else if(!(other instanceof Project)) {
+			return false;
+		} else {
+			Project otherProject = (Project)other;
+			return this.id.equals(otherProject.id) && this.name.equals(otherProject.name);
+		}
+	}
 }

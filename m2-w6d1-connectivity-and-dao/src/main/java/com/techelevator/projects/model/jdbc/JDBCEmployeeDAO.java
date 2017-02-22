@@ -1,5 +1,6 @@
 package com.techelevator.projects.model.jdbc;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,7 +55,7 @@ public class JDBCEmployeeDAO implements EmployeeDAO {
 		ArrayList<Employee> employee = new ArrayList<>();
 		String sqlGetEmployeesByDepartment = "SELECT employee_id, department_id, first_name, last_name, birth_date, gender, hire_date " +
 										"FROM employee " +
-										"WHERE employee_id = ?";
+										"WHERE department_id = ?";
 		SqlRowSet results = jdbcTemplate.queryForRowSet(sqlGetEmployeesByDepartment, id);
 		while(results.next()) {
 			Employee theEmployee = mapRowToEmployee(results);
@@ -81,6 +82,8 @@ public class JDBCEmployeeDAO implements EmployeeDAO {
 	@Override
 	public List<Employee> getEmployeesByProjectId(Long projectId) {
 		ArrayList<Employee> employee = new ArrayList<>();
+
+
 		String sqlGetEmployeesByProjectId = "SELECT * FROM project_employee " + "JOIN employee ON employee.employee_id = project_employee.employee_id " +
 										"WHERE project_id = ?";   
 		SqlRowSet results = jdbcTemplate.queryForRowSet(sqlGetEmployeesByProjectId, projectId);
@@ -91,6 +94,8 @@ public class JDBCEmployeeDAO implements EmployeeDAO {
 		}
 		return employee;	
 	}
+	
+
 
 	@Override
 	public void changeEmployeeDepartment(Long employeeId, Long departmentId) {
@@ -98,6 +103,53 @@ public class JDBCEmployeeDAO implements EmployeeDAO {
 										"SET department_id = ? " +
 										"WHERE employee_id = ?";
 		jdbcTemplate.update(sqlChangeEmployeeDepartment, departmentId, employeeId);
+	}
+	
+
+	@Override
+	public Employee createEmployee(String firstName, String lastName, LocalDate birthDay, char gender,
+			LocalDate hireDate) {
+		Long id = getNextEmployeeId();
+		String sqlAddEmployee = "Insert into employee  (employee_id, first_name, last_name,  birth_date, gender, " +
+								"hire_date) values (?,?,?,?,?,?)";
+		jdbcTemplate.update(sqlAddEmployee, id, firstName, lastName, birthDay, gender, hireDate);
+		Employee theEmployee = new Employee();
+		theEmployee.setId(id);
+	//	theEmployee.setDepartmentId(departmentId);
+		theEmployee.setFirstName(firstName);
+		theEmployee.setLastName(lastName);
+		theEmployee.setBirthDay(birthDay);
+		theEmployee.setGender(gender);
+		theEmployee.setHireDate(hireDate);
+		return theEmployee;
+	}
+
+	@Override
+	public void removeEmployee(Long employeeId) {
+		String sqlRemoveEmployee = "DELETE FROM employee WHERE employee_id = ?";
+		jdbcTemplate.update(sqlRemoveEmployee, employeeId);
+		
+	}
+	
+	private long getNextEmployeeId() {
+		SqlRowSet nextIdResult = jdbcTemplate.queryForRowSet("SELECT nextval('seq_employee_id')");
+		if(nextIdResult.next()) {
+			return nextIdResult.getLong(1);
+		} else {
+			throw new RuntimeException("Something went wrong while getting an id for the new project");
+		}
+	}
+	
+	@Override
+	public Employee getEmployeeById(Long employeeId){
+		String sqlGetEmployeeById = "SELECT * FROM employee WHERE employee_id = ?";
+		SqlRowSet results = jdbcTemplate.queryForRowSet(sqlGetEmployeeById, employeeId);
+		if(results.next()){
+			Employee theEmployee = mapRowToEmployee(results);
+			return theEmployee;
+		} else {
+		return null;
+		}
 	}
 	
 	private Employee mapRowToEmployee(SqlRowSet results) {

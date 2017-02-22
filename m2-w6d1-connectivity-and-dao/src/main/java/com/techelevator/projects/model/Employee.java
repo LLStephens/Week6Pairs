@@ -56,4 +56,15 @@ public class Employee {
 	public String toString() {
 		return lastName + ", " + firstName;
 	}
+	@Override
+	public boolean equals(Object other) {
+		if(other == null) {
+			return false;
+		} else if(!(other instanceof Employee)) {
+			return false;
+		} else {
+			Employee otherEmp = (Employee)other;
+			return this.employeeId.equals(otherEmp.employeeId) && this.lastName.equals(otherEmp.lastName) && this.departmentId.equals(otherEmp.departmentId);
+		}
+	}
 }

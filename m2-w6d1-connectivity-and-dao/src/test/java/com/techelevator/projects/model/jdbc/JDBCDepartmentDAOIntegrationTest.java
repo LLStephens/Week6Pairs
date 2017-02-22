@@ -3,6 +3,8 @@ package com.techelevator.projects.model.jdbc;
 import static org.junit.Assert.*;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -16,27 +18,19 @@ import com.techelevator.projects.model.Department;
 import com.techelevator.projects.model.DepartmentDAO;
 
 public class JDBCDepartmentDAOIntegrationTest {
-	
-	/* Using this particular implementation of DataSource so that
-	 * every database interaction is part of the same database
-	 * session and hence the same database transaction */
+
 	private static SingleConnectionDataSource dataSource;
 	private DepartmentDAO dao;
 	
-	/* Before any tests are run, this method initializes the datasource for testing. */
 	@BeforeClass
 	public static void setupDataSource() {
 		dataSource = new SingleConnectionDataSource();
 		dataSource.setUrl("jdbc:postgresql://localhost:5432/projects");
 		dataSource.setUsername("postgres");
 		dataSource.setPassword("postgres1");
-		/* The following line disables autocommit for connections 
-		 * returned by this DataSource. This allows us to rollback
-		 * any changes after each test */
 		dataSource.setAutoCommit(false);
 	}
 	
-	/* After all tests have finished running, this method will close the DataSource */
 	@AfterClass
 	public static void closeDataSource() throws SQLException {
 		dataSource.destroy();
@@ -47,8 +41,6 @@ public class JDBCDepartmentDAOIntegrationTest {
 		dao = new JDBCDepartmentDAO(dataSource);
 	}
 
-	/* After each test, we rollback any changes that were made to the database so that
-	 * everything is clean for the next test */
 	@After
 	public void rollback() throws SQLException {
 		dataSource.getConnection().rollback();
@@ -56,7 +48,9 @@ public class JDBCDepartmentDAOIntegrationTest {
 	
 	@Test
 	public void created_department_has_correct_name() {
-		String departmentName = "Department of Happiness";
+
+		String departmentName = "Marketing";
+
 		Department savedDepartment = dao.createDepartment(departmentName);
 		
 		assertNotNull(savedDepartment);
@@ -66,7 +60,7 @@ public class JDBCDepartmentDAOIntegrationTest {
 
 	@Test
 	public void department_can_be_found_by_id_after_being_created() {
-		String departmentName = "Department of Happiness";
+		String departmentName = "Marketing";
 		
 		Department savedDepartment = dao.createDepartment(departmentName);
 		Department foundDepartment = dao.getDepartmentById(savedDepartment.getId());
@@ -75,4 +69,68 @@ public class JDBCDepartmentDAOIntegrationTest {
 		assertEquals(savedDepartment.getId(), foundDepartment.getId());
 		assertEquals(savedDepartment.getName(), foundDepartment.getName());
 	}
+	
+	@Test
+	public void returns_dept_by_name() {
+		String departmentName = "Marketing";
+		
+		Department savedDepartment = dao.createDepartment(departmentName);
+		List<Department> foundDepartments = dao.searchDepartmentsByName(departmentName);
+		
+		assertNotNull(foundDepartments);
+		assertEquals(1, foundDepartments.size());
+		
+		Department foundDepartment = foundDepartments.get(0);
+		assertEquals(departmentName, foundDepartment.getName());
+	}
+	
+	@Test
+	public void changes_department_name_(){
+		String departmentName = "Marketing";
+		String newName = "Money";
+
+		Department savedDepartment = dao.createDepartment(departmentName);
+		
+		Long departmentId = savedDepartment.getId();
+		
+		dao.updateDepartmentName(departmentId, newName);
+		
+		Department updatedDepartment = dao.getDepartmentById(departmentId);
+		
+		assertNotNull(updatedDepartment);
+		assertEquals(newName, updatedDepartment.getName());
+	}
+	
+	@Test   
+	public void create_several_departments_and_get_verify_multiple_returned() {
+		String departmentName = "Marketing";
+		Department savedDepartment = dao.createDepartment(departmentName);
+		String departmentName2 = "Bowling";
+		Department savedDepartment2 = dao.createDepartment(departmentName2);
+
+		List<Department> results = dao.getAllDepartments();
+		
+		assertNotNull(results);
+		assertTrue("There should be at least 2 departments", results.size() >= 2);
+		assertTrue(results.contains(savedDepartment));
+		assertTrue(results.contains(savedDepartment2));
+	}
+	
+	
+	@Test  
+	public void delete_a_department(){
+		String departmentName = "Marketing";
+		Department savedDepartment = dao.createDepartment(departmentName);
+		
+		assertNotNull(savedDepartment);
+		
+		Long departmentId = savedDepartment.getId();
+		dao.deleteDepartmentById(departmentId);
+		
+		Department deletedDepartment = dao.getDepartmentById(departmentId);
+		assertNull(deletedDepartment);
+	}
+	
+	
+	
 }
