@@ -57,10 +57,10 @@ public class JDBCDepartmentDAOIntegrationTest {
 	@Test
 	public void created_department_has_correct_name() {
 		String departmentName = "Department of Happiness";
-			
 		Department savedDepartment = dao.createDepartment(departmentName);
 		
 		assertNotNull(savedDepartment);
+		assertNotNull(savedDepartment.getId());
 		assertEquals(departmentName, savedDepartment.getName());
 	}
 

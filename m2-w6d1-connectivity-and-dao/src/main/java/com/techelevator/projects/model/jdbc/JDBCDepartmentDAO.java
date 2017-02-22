@@ -82,6 +82,11 @@ public class JDBCDepartmentDAO implements DepartmentDAO {
 		
 	}
 	
+	@Override
+	public void deleteDepartmentById(Long departmentId) {
+		// TODO: Make this work
+	}
+	
 	private Department mapRowToDepartment(SqlRowSet results) {
 		Department theDepartment;
 		theDepartment = new Department();
@@ -89,7 +94,5 @@ public class JDBCDepartmentDAO implements DepartmentDAO {
 		theDepartment.setName(results.getString("name"));
 		return theDepartment;
 	}
-
-	
 
 }
