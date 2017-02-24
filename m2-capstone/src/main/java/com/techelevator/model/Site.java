@@ -1,5 +1,7 @@
 package com.techelevator.model;
 
+import java.math.BigDecimal;
+
 public class Site {
 	private String siteId;
 	private int campgroundId;
@@ -33,10 +35,10 @@ public class Site {
 	public void setMaxOccupancy(int maxOccupancy) {
 		this.maxOccupancy = maxOccupancy;
 	}
-	public boolean isAccessible() {
+	public boolean getIsAccessible() {
 		return accessible;
 	}
-	public void setAccessible(boolean accessible) {
+	public void setIsAccessible(boolean accessible) {
 		this.accessible = accessible;
 	}
 	public int getMaxRvLength() {
@@ -45,17 +47,17 @@ public class Site {
 	public void setMaxRvLength(int max_rv_length) {
 		this.maxRvLength = max_rv_length;
 	}
-	public boolean isUtilities() {
+	public boolean getIsUtilities() {
 		return utilities;
 	}
-	public void setUtilities(boolean utilities) {
+	public void setIsUtilities(boolean utilities) {
 		this.utilities = utilities;
 	}
-	
+
 	
 	@Override
 	public String toString() {
-		return siteNumber + "\t" + maxOccupancy + "\t" + accessible + "\t" + maxRvLength + "\t" + utilities;
+		return (String.format("%-20s %-15s %-15s %-10s", siteNumber , maxOccupancy, accessible, maxRvLength, utilities));
 	}
 	
 

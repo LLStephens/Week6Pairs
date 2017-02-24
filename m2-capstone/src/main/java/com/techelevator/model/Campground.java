@@ -1,6 +1,7 @@
 package com.techelevator.model;
 
 import java.math.BigDecimal;
+import java.text.NumberFormat;
 import java.time.LocalDate;
 
 public class Campground {
@@ -10,6 +11,8 @@ public class Campground {
 	private String openingMonth;
 	private String closingMonth;
 	private BigDecimal dailyFee;
+	private NumberFormat currency = NumberFormat.getCurrencyInstance();
+
 
 	
 	public int getCamgroundId() {
@@ -61,7 +64,6 @@ public class Campground {
 	}
 	@Override
 	public String toString() {
-		return name;
-		//return name + "\t\t" + openingMonth + "\t" + closingMonth + "\t" + dailyFee;
+		return (String.format("%-25s %-15s %-15s %-10s", name , openingMonth, closingMonth, currency.format(dailyFee)));
 	}
 }

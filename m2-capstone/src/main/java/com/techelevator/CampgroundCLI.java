@@ -3,6 +3,7 @@ package com.techelevator;
 
 import java.math.BigDecimal;
 import java.text.DateFormat;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -55,6 +56,7 @@ public class CampgroundCLI {
 	private Period period;
 	private Date fromDate;
 	private Date toDate;
+	private NumberFormat currency = NumberFormat.getCurrencyInstance();
 
 
 	
@@ -110,7 +112,8 @@ public class CampgroundCLI {
 	
 	private void handleParkCampgroundList() {
 		printHeading("Campground List");
-		System.out.println("\t Name \t\t Open \t Close \t Daily Fee");
+		System.out.println(String.format("%-20s %-15s %-15s %-5s", "Name" , "Opening Month", "Closing Month", "Daily Fee"));
+		//System.out.println("Name \t\t Open \t Close \t Daily Fee");
 		List<Park> allParks = parkDAO.getAllParks();
 		if(allParks.size() > 0) {
 			campgroundMenu();
@@ -121,7 +124,7 @@ public class CampgroundCLI {
 	
 	private void campgroundMenu() {
 		List<Campground> parkCampgrounds = campgroundDAO.getCampgroundsByParkId(parkChoice.getParkId());
-		campgroundChoice = (Campground)menu.getChoiceFromOptions(parkCampgrounds.toArray());
+		campgroundChoice = (Campground)menu.getCampgroundChoiceFromOptions(parkCampgrounds.toArray());
 		System.out.println();
 		handleCampgroundSiteList();
 	}
@@ -140,9 +143,14 @@ public class CampgroundCLI {
 		toDate = java.sql.Date.valueOf(departureDate);
 		fromDate = java.sql.Date.valueOf(arrivalDate);
 		printHeading("Available Sites");
+		System.out.println("Campground \t Site Number \t Max Occupancy \t Accessible? \t Max RV Length \t Utility \t Cost");
+		//Campground campgroundForSiteChoice= campgroundDAO.getCampgroundById(siteChoice.getCampgroundId());
+		System.out.println(campgroundChoice.getName());
+
 		List<Site> siteList = siteDAO.getSiteByAvailability(campgroundChoice.getCamgroundId(), fromDate, toDate);
 		if(siteList.size() > 0){
-			siteChoice = (Site)menu.getChoiceFromOptions(siteList.toArray());
+			siteChoice = (Site)menu.getSiteChoiceFromOptions(siteList);
+//			siteChoice = (Site)menu.getSiteChoiceFromOptions(siteList.toArray());
 		} else {
 			System.out.println("\n*** No results ***");
 			//run();
@@ -158,6 +166,7 @@ public class CampgroundCLI {
 		toDate = java.sql.Date.valueOf(departureDate);
 		fromDate = java.sql.Date.valueOf(arrivalDate);
 		printHeading("Available Sites");
+		System.out.println("Campground \t Site Number \t Max Occupancy \t Accessible? \t Max RV Length \t Utility \t Cost");
 		List<Site> siteList = siteDAO.getSiteByAvailability(parkChoice.getParkId(), fromDate, toDate);
 		if(siteList.size() > 0){
 			siteChoice = (Site)menu.getChoiceFromOptions(siteList.toArray());
@@ -167,14 +176,15 @@ public class CampgroundCLI {
 		}
 		System.out.println();
 		System.out.println("You have selected option # " + siteChoice.getSiteNumber());
-		//NEED TO CHANGE CALCULATECOST() TO USE PARKID INSTEAD OF CAMPGROUND ID
-		//calculateTotalCost();
+		calculateTotalCost();
 		confirmation();
 	}
 	
 	private void calculateTotalCost(){
-		BigDecimal totalCost = campgroundChoice.getDailyFee().multiply(new BigDecimal(period.getDays()));
-		System.out.println("The total cost of your stay will be $" + totalCost + " .");
+		Campground campgroundForSiteChoice= campgroundDAO.getCampgroundById(siteChoice.getCampgroundId());
+		BigDecimal dailyFee = campgroundForSiteChoice.getDailyFee();
+		BigDecimal totalCost = dailyFee.multiply(new BigDecimal(period.getDays()));
+		System.out.println("The total cost of your stay will be " + currency.format(totalCost) + " .");
 	}
 	
 	
@@ -223,8 +233,11 @@ public class CampgroundCLI {
 			//THIS IS HOW IT NEEDS TO BE  getSiteId()
 			//reservation = reservationDAO.createReservation(siteChoice.getSiteId(), reservationName, fromDate, toDate);
 			//THIS IS HOW IT IS
+			System.out.println("Site id: " +siteChoice.getSiteId());
+			System.out.println("Site #: " +siteChoice.getSiteNumber());
 			Reservation reservation = reservationDAO.createReservation(siteChoice.getSiteNumber(), reservationName, fromDate, toDate);
-			System.out.println("A reservation for " + period.getDays() + " day(s) has been made.  The confirmation number is " +  reservation.getReservationId() + " .");;
+		//	System.out.println("A reservation for " + period.getDays() + " day(s) has been made.  The confirmation number is " +  reservation.getReservationId() + " .");;
+			System.out.println("ReservationId: " + reservation.getReservationId());
 		} else {
 			run();
 		}

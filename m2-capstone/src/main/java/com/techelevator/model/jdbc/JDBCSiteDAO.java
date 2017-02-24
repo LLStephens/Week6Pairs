@@ -102,9 +102,9 @@ public class JDBCSiteDAO implements SiteDAO {
 		theSite.setCampgroundId(results.getInt("campground_id"));
 		theSite.setSiteNumber(results.getInt("site_number"));
 		theSite.setMaxOccupancy(results.getInt("max_occupancy"));
-		theSite.setAccessible(results.getBoolean("accessible"));
+		theSite.setIsAccessible(results.getBoolean("accessible"));
 		theSite.setMaxRvLength(results.getInt("max_rv_length"));
-		theSite.setUtilities(results.getBoolean("utilities"));
+		theSite.setIsUtilities(results.getBoolean("utilities"));
 		return theSite;
 	}
 
