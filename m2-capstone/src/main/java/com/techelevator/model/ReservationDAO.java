@@ -1,0 +1,25 @@
+package com.techelevator.model;
+
+import java.util.Date;
+import java.util.List;
+
+
+public interface ReservationDAO {
+	// Create
+	public Reservation createReservation(String reservationName);
+	
+	// Read
+	public List<Reservation> getAllReservations();
+	public List<Reservation> searchReservationByName(String nameSearch);
+	public Reservation getReservationById(int reservationId);
+	public 	List<Reservation> getReservationByAvailability(int campgroundId, Date fromDate, Date toDate);
+	
+	// Update
+	public void updateReservationName(int reservationId, String reservationName);
+	
+	// Delete
+	public void deleteReservationById(int reservationId);
+
+}
+	
+

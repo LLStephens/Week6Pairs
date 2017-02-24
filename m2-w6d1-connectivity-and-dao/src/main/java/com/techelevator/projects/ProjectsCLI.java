@@ -85,7 +85,7 @@ public class ProjectsCLI {
 	}
 
 	private void run() {
-		displayApplicationBanner();	
+		//displayApplicationBanner();	
 		while(true) {
 			printHeading("Main Menu");
 			String choice = (String)menu.getChoiceFromOptions(MAIN_MENU_OPTIONS);
