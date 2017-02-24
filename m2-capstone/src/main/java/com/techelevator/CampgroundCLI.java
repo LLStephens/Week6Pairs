@@ -6,6 +6,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
@@ -229,8 +230,18 @@ public class CampgroundCLI {
 		}
 	}
 	
+	
 //	private void isCampgroundOpen(){
-//		
+//		Campground campground = campgroundDAO.getCampgroundById(siteChoice.getCampgroundId());
+//		String openingMonthString = campground.getOpeningMonth();
+//		String closingMonthString = campground.getClosingMonth();
+//		int openingMonth = Integer.parseInt(openingMonthString);
+//		int closingMonth = Integer.parseInt(closingMonthString);
+//		int arrivalMonth = fromDate.getMonth();
+//		int departureMonth = toDate.getMonth();
+//		if arrivalMonth is between openingMonth and closingMonth, will have arrived too early
+//		if departureMonth is between openingMonth and closingMonth, will have departed too late
+//		if (arrivalMonth <= openingMonth and departureMonth >= closingMonth))
 //	}
 	
 }

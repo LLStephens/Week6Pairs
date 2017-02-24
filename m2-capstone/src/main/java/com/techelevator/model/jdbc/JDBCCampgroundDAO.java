@@ -57,8 +57,10 @@ public class JDBCCampgroundDAO implements CampgroundDAO {
 
 	@Override
 	public Campground getCampgroundById(int campgroundId) {
-		// TODO Auto-generated method stub
-		return null;
+		Campground campground = new Campground();
+		String sqlGetCampgroundById = "Select * from campground where campground_id = ?";
+		jdbcTemplate.update(sqlGetCampgroundById, campgroundId);
+		return campground;
 	}
 
 	@Override
