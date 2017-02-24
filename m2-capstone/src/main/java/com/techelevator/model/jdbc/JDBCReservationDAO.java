@@ -12,34 +12,38 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 import com.techelevator.model.Reservation;
 import com.techelevator.model.ReservationDAO;
 
+
 public class JDBCReservationDAO implements ReservationDAO{
 	private JdbcTemplate jdbcTemplate;
 
 	public JDBCReservationDAO(DataSource dataSource) {
 		this.jdbcTemplate = new JdbcTemplate(dataSource);
 	}
-	@Override 
-	public List<Reservation> getReservationByAvailability(int campgroundId, Date fromDate, Date toDate){
-		ArrayList<Reservation> reservation = new ArrayList();
-		String sqlGetReservationByAvailability = "Select * from site where campground_id = ? and site_id not in(select site_id from reservation as r where r.from_date between ? and ? or r.to_date between ? and ? or (r.from_date <= ? and r.to_date >= ?";
-		SqlRowSet results = jdbcTemplate.queryForRowSet(sqlGetReservationByAvailability, campgroundId);
-		while(results.next()){
-			Reservation theReservation = mapRowToReservation(results);
-			reservation.add(theReservation);
-		}
-		return reservation;
-	}
+
 	
 	@Override
-	public Reservation createReservation(String reservationName) {
-		// TODO Auto-generated method stub
-		return null;
+	public Reservation createReservation(int siteId, String reservationName, Date fromDate, Date toDate) {
+		Reservation reservation = new Reservation();
+		String sqlCreateReservation = "Insert into reservation (site_id, name, from_date, to_date) " 
+									+ "values (?, ?, ?, ?)";
+		jdbcTemplate.update(sqlCreateReservation, siteId, reservationName, fromDate, toDate);					
+				
+		return reservation;
 	}
 
 	@Override
-	public List<Reservation> getAllReservations() {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Reservation> getAllReservationsForPark(int parkId) {
+		ArrayList<Reservation> reservation = new ArrayList<>();
+		String sqlGetAllReservations = "SELECT * " +
+										"FROM reservation WHERE park_id = ? Limit 30"; // BONUS need to join to work
+																						//And supposed to limit by 30 days, not 30
+		SqlRowSet results = jdbcTemplate.queryForRowSet(sqlGetAllReservations, parkId);
+		while(results.next()) {
+			Reservation theReservation = mapRowToReservation(results);
+			reservation.add(theReservation);
+
+		}
+		return reservation;
 	}
 
 	@Override
@@ -67,13 +71,21 @@ public class JDBCReservationDAO implements ReservationDAO{
 	}
 	
 	private Reservation mapRowToReservation(SqlRowSet results) {
-		Reservation theReservation = new Reservation();;
+		Reservation theReservation;
+		theReservation = new Reservation();
 		theReservation.setReservationId(results.getInt("reservation_id"));
 		theReservation.setSiteId(results.getInt("site_id"));
-		theReservation.setCreateDate(results.getDate("create_date"));
 		theReservation.setName(results.getString("name"));
 		theReservation.setFromDate(results.getDate("from_date"));
 		theReservation.setToDate(results.getDate("to_date"));
+
 		return theReservation;
+	}
+
+
+	@Override
+	public List<Reservation> getAllReservations() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

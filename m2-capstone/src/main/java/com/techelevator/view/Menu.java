@@ -24,16 +24,16 @@ public class Menu {
 		return choice;
 	}
 
-	public Object getChoiceFromUserInput(Object[] options) { //same object array
+	public Object getChoiceFromUserInput(Object[] options) { 
 		Object choice = null;
 		String userInput = in.nextLine();
 		try {
-			int selectedOption = Integer.valueOf(userInput); //try to parse input as integer
+			int selectedOption = Integer.valueOf(userInput); 
 			if(selectedOption > 0 && selectedOption <= options.length) {
 				choice = options[selectedOption - 1];
 			}
 		} catch(NumberFormatException e) {
-			// eat the exception, an error message will be displayed below since choice will be null
+			e.getMessage();
 		}
 		if(choice == null) {
 			out.println("\n*** "+userInput+" is not a valid option ***\n");
@@ -47,7 +47,7 @@ public class Menu {
 			int optionNum = i+1;
 			out.println(optionNum+") "+options[i]);
 		}
-		out.print("\nPlease choose an option >>> \n");
+		out.print("\nPlease choose from the above options >>> ");
 		out.flush();
 	}
 

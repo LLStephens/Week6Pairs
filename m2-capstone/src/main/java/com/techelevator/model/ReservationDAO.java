@@ -6,19 +6,21 @@ import java.util.List;
 
 public interface ReservationDAO {
 	// Create
-	public Reservation createReservation(String reservationName);
+	public Reservation createReservation(int siteId, String reservationName, Date fromDate, Date toDate);
 	
 	// Read
 	public List<Reservation> getAllReservations();
 	public List<Reservation> searchReservationByName(String nameSearch);
 	public Reservation getReservationById(int reservationId);
-	public 	List<Reservation> getReservationByAvailability(int campgroundId, Date fromDate, Date toDate);
+	public List<Reservation> getAllReservationsForPark(int parkId);
 	
 	// Update
 	public void updateReservationName(int reservationId, String reservationName);
 	
 	// Delete
 	public void deleteReservationById(int reservationId);
+
+	
 
 }
 	

@@ -6,7 +6,7 @@ public class Site {
 	private int siteNumber;
 	private int maxOccupancy;
 	private boolean accessible;
-	private int max_rv_length;
+	private int maxRvLength;
 	private boolean utilities;
 	
 	public String getSiteId() {
@@ -40,10 +40,10 @@ public class Site {
 		this.accessible = accessible;
 	}
 	public int getMaxRvLength() {
-		return max_rv_length;
+		return maxRvLength;
 	}
 	public void setMaxRvLength(int max_rv_length) {
-		this.max_rv_length = max_rv_length;
+		this.maxRvLength = max_rv_length;
 	}
 	public boolean isUtilities() {
 		return utilities;
@@ -52,9 +52,10 @@ public class Site {
 		this.utilities = utilities;
 	}
 	
+	
 	@Override
 	public String toString() {
-		return siteId;
+		return siteNumber + "\t" + maxOccupancy + "\t" + accessible + "\t" + maxRvLength + "\t" + utilities;
 	}
 	
 

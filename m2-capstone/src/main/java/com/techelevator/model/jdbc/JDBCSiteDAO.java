@@ -2,6 +2,7 @@ package com.techelevator.model.jdbc;
 
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -10,6 +11,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 
 import com.techelevator.model.Campground;
+import com.techelevator.model.Reservation;
 import com.techelevator.model.Site;
 import com.techelevator.model.SiteDAO;
 
@@ -33,10 +35,36 @@ public class JDBCSiteDAO implements SiteDAO {
 	}
 	
 	@Override
+	public List<Site> getSitesByParkId(int parkId){
+		ArrayList<Site> site = new ArrayList();
+		String sqlGetSitesByParkId = "Select * from site where park_id = ?";
+		SqlRowSet results = jdbcTemplate.queryForRowSet(sqlGetSitesByParkId, parkId);
+		while(results.next()){
+			Site theSite = mapRowToSite(results);
+			site.add(theSite);
+		}
+		return site;
+	}
+	
+	@Override
 	public List<Site> getSitesByCampgroundId(int campgroundId){
 		ArrayList<Site> site = new ArrayList();
-		String sqlGetSitesByCampgroundId = "Select * from site where campground_id = ? Limit 5";
+		String sqlGetSitesByCampgroundId = "Select * from site where campground_id = ?";
 		SqlRowSet results = jdbcTemplate.queryForRowSet(sqlGetSitesByCampgroundId, campgroundId);
+		while(results.next()){
+			Site theSite = mapRowToSite(results);
+			site.add(theSite);
+		}
+		return site;
+	}
+	
+	@Override 
+	public List<Site> getSiteByAvailability(int campgroundId, Date fromDate, Date toDate){
+		ArrayList<Site> site = new ArrayList();
+		String sqlGetSiteByAvailability = "Select * from site where campground_id = ? and site_id not in " +
+												"(select site_id from reservation as r where r.from_date between ? and ? " +
+												"or r.to_date between ? and ? or (r.from_date <= ? and r.to_date >= ?)) Limit 5";
+		SqlRowSet results = jdbcTemplate.queryForRowSet(sqlGetSiteByAvailability, campgroundId, fromDate, toDate, fromDate, toDate, fromDate, toDate);
 		while(results.next()){
 			Site theSite = mapRowToSite(results);
 			site.add(theSite);

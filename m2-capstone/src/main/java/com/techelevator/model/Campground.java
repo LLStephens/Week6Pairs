@@ -61,6 +61,7 @@ public class Campground {
 	}
 	@Override
 	public String toString() {
-		return name + "\t\t" + openingMonth + "\t" + closingMonth + "\t" + dailyFee;
+		return name;
+		//return name + "\t\t" + openingMonth + "\t" + closingMonth + "\t" + dailyFee;
 	}
 }
