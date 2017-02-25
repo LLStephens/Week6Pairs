@@ -28,7 +28,7 @@ public class JDBCReservationDAO implements ReservationDAO{
 									+ "values (?, ?, ?, ?)";
 		jdbcTemplate.update(sqlCreateReservation, siteId, reservationName, fromDate, toDate);					
 				
-		return reservation;
+		return getReservationByName(reservationName).get(0);
 	}
 
 	@Override
@@ -47,9 +47,15 @@ public class JDBCReservationDAO implements ReservationDAO{
 	}
 
 	@Override
-	public List<Reservation> searchReservationByName(String nameSearch) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Reservation> getReservationByName(String nameSearch) {
+		ArrayList<Reservation> reservation = new ArrayList<>();
+		String sqlGetReservationByName = "Select * from reservation where name = ?";
+		SqlRowSet results = jdbcTemplate.queryForRowSet(sqlGetReservationByName, nameSearch);
+		while(results.next()){
+			Reservation theReservation = mapRowToReservation(results);
+			reservation.add(theReservation);
+		}
+		return reservation;
 	}
 
 	@Override

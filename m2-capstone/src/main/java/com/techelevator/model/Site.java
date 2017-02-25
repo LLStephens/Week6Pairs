@@ -54,8 +54,9 @@ public class Site {
 	
 	@Override
 	public String toString() {
-		return (String.format("%-15s %-10s %-5s %5s %-10s", siteNumber , maxOccupancy, accessible, maxRvLength, utilities));
+		return (String.format("%-15s %-10s %5s %5s %15s ", siteNumber , maxOccupancy, accessible, maxRvLength, utilities));
 	}
+	
 	
 
 }

@@ -158,7 +158,7 @@ public class CampgroundCLI {
 				System.out.print(optionNum+") ");
 				System.out.printf("%-25s", campgroundDAO.getCampgroundById(campgroundIdForSite).getName()+ "\t");
 				System.out.print(siteList.get(i));
-				System.out.println(currency.format(siteCampground.getDailyFee()) + "\n");
+				System.out.printf("%10s", currency.format(siteCampground.getDailyFee()) + "\n");
 			}
 		} else {
 			handleUnavailableDates();
@@ -227,7 +227,7 @@ public class CampgroundCLI {
 			System.out.println("Site id: " +siteChoice.getSiteId());
 			System.out.println("Site #: " +siteChoice.getSiteNumber());
 			Reservation reservation = reservationDAO.createReservation(siteChoice.getSiteNumber(), reservationName, fromDate, toDate);
-		//	System.out.println("A reservation for " + period.getDays() + " day(s) has been made.  The confirmation number is " +  reservation.getReservationId() + " .");;
+		//	System.out.println("A reservation for " + period.getDays() + " day(s) has been made.  The confirmation number is " +  reservation.getReservationId() + " .");
 			System.out.println("ReservationId: " + reservation.getReservationId());
 		} else {
 			run();

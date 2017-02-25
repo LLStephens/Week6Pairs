@@ -10,7 +10,7 @@ public interface ReservationDAO {
 	
 	// Read
 	public List<Reservation> getAllReservations();
-	public List<Reservation> searchReservationByName(String nameSearch);
+	public List<Reservation> getReservationByName(String nameSearch);
 	public Reservation getReservationById(int reservationId);
 	public List<Reservation> getAllReservationsForPark(int parkId);
 	

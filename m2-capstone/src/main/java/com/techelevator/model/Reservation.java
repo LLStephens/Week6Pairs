@@ -1,6 +1,6 @@
 package com.techelevator.model;
 
-import java.time.LocalDate;
+
 import java.util.Date;
 
 
@@ -63,6 +63,7 @@ public class Reservation {
 	@Override
 	public String toString() {
 		return name;
+//		return (name + reservationId + siteId + fromDate +  toDate + createDate);
 	}
 	
 }
