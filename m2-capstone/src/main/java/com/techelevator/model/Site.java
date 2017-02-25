@@ -1,7 +1,5 @@
 package com.techelevator.model;
 
-import java.math.BigDecimal;
-
 public class Site {
 	private String siteId;
 	private int campgroundId;
@@ -10,7 +8,7 @@ public class Site {
 	private boolean accessible;
 	private int maxRvLength;
 	private boolean utilities;
-	
+		
 	public String getSiteId() {
 		return siteId;
 	}
@@ -53,11 +51,10 @@ public class Site {
 	public void setIsUtilities(boolean utilities) {
 		this.utilities = utilities;
 	}
-
 	
 	@Override
 	public String toString() {
-		return (String.format("%-20s %-15s %-15s %-10s", siteNumber , maxOccupancy, accessible, maxRvLength, utilities));
+		return (String.format("%-15s %-10s %-5s %5s %-10s", siteNumber , maxOccupancy, accessible, maxRvLength, utilities));
 	}
 	
 

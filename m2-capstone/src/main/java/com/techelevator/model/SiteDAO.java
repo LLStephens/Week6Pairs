@@ -13,7 +13,8 @@ public interface SiteDAO {
 	public List<Site> searchSiteByName(String nameSearch);
 	public Site getSiteById(int siteId);
 	public List<Site> getSitesByCampgroundId(int campgroundId);
-	public List<Site> getSiteByAvailability(int campgroundId, Date fromDate, Date toDate);
+	public List<Site> getSiteByAvailabilityPerCampground(int campgroundId, Date fromDate, Date toDate);
+	public List<Site> getSiteByAvailabilityPerPark(int parkId, Date fromDate, Date toDate);
 	public List<Site> getSitesByParkId(int parkId);
 	
 	// Update

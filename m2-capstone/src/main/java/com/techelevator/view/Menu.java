@@ -3,6 +3,7 @@ package com.techelevator.view;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Scanner;
 
@@ -17,7 +18,7 @@ public class Menu {
 		this.out = new PrintWriter(output);
 		this.in = new Scanner(input);
 	}
-
+	//general menus
 	public Object getChoiceFromOptions(Object[] options) { //takes array of anything, present list to user, ask user for selection, 
 		Object choice = null;
 		while(choice == null) {
@@ -27,19 +28,45 @@ public class Menu {
 		return choice;
 	}
 	
-	public Object getCampgroundChoiceFromOptions(Object[] options) { 
-		Object camgroundChoice = null;
-		while(camgroundChoice == null) {
-			displayCampgroundMenuOptions(options); 
-			camgroundChoice = getChoiceFromUserInput(options);
+	public Object getChoiceFromUserInput(Object[] options) { 
+		Object choice = null;
+		String userInput = in.nextLine();
+		try {
+			int selectedOption = Integer.valueOf(userInput); 
+			if(selectedOption > 0 && selectedOption <= options.length) {
+				choice = options[selectedOption - 1];
+			} else if (selectedOption == 0){
+				System.exit(0);
+			}
+		} catch(NumberFormatException e) {
+			e.getMessage();
 		}
-		return camgroundChoice;
+		if(choice == null) {
+			out.println("\n*** "+userInput+" is not a valid option ***\n");
+		}
+		return choice;
 	}
 	
+	private void displayMenuOptions(Object[] options) {
+		out.println();
+		for(int i = 0; i < options.length; i++) {
+			int optionNum = i+1;
+			out.println(optionNum+") "+options[i]);
+		}
+		out.print("\nPlease choose from the above options (or enter 0 to cancel) >>> ");
+		out.flush();
+	}
+	
+	public String getUserInput(String prompt) {
+		System.out.print(prompt + " >>> ");
+		return new Scanner(System.in).nextLine();
+	}
+	
+	//site specific menus
 	public Object getSiteChoiceFromOptions(List<Site> siteList) { 
 		Object siteChoice = null;
 		while(siteChoice == null) {
-			displaySiteMenuOptions(siteList); 
+			displaySiteMenuOptions(siteList);
 			siteChoice = getSiteChoiceFromUserInput(siteList);
 		}
 		return siteChoice;
@@ -52,6 +79,8 @@ public class Menu {
 			int selectedOption = Integer.valueOf(userInput); 
 			if(selectedOption > 0 && selectedOption <= siteList.size()) {
 				siteChoice = siteList.get(selectedOption - 1);
+			} else if (selectedOption == 0){
+				System.exit(0);
 			}
 		} catch(NumberFormatException e) {
 			e.getMessage();
@@ -62,54 +91,9 @@ public class Menu {
 		return siteChoice;
 	}
 
-	public Object getChoiceFromUserInput(Object[] options) { 
-		Object choice = null;
-		String userInput = in.nextLine();
-		try {
-			int selectedOption = Integer.valueOf(userInput); 
-			if(selectedOption > 0 && selectedOption <= options.length) {
-				choice = options[selectedOption - 1];
-			}
-		} catch(NumberFormatException e) {
-			e.getMessage();
-		}
-		if(choice == null) {
-			out.println("\n*** "+userInput+" is not a valid option ***\n");
-		}
-		return choice;
-	}
-
-	private void displayMenuOptions(Object[] options) {
-		out.println();
-		for(int i = 0; i < options.length; i++) {
-			int optionNum = i+1;
-			out.println(optionNum+") "+options[i]);
-		}
-		out.print("\nPlease choose from the above options >>> ");
-		out.flush();
-	}
-	
-	private void displayCampgroundMenuOptions(Object[] options) {
-		out.println();
-		for(int i = 0; i < options.length; i++) {
-			int optionNum = i+1;
-			out.println(optionNum+") "+options[i].toString());
-		}
-		out.print("\nPlease choose from the above campground options >>> ");
-		out.flush();
-	}
-	
 	private void displaySiteMenuOptions(List<Site> siteList) {
 		out.println();
-		for(int i = 0; i < siteList.size(); i++) {
-			int optionNum = i+1;
-			out.println(optionNum+") "+(String.format("%-25s %-15s %-15s %-10s",siteList.get(i).getSiteNumber(), siteList.get(i).getMaxOccupancy(), siteList.get(i).getIsAccessible(), siteList.get(i).getMaxRvLength(),  siteList.get(i).getIsUtilities())));
-			out.println(optionNum+") "+ siteList.get(i).getSiteNumber() +" "+ siteList.get(i).getMaxOccupancy()+" "+ siteList.get(i).getIsAccessible()+" "+ siteList.get(i).getMaxRvLength()+" "+  siteList.get(i).getIsUtilities());
-		}
-		
-		out.print("\nPlease choose from the above site options >>> ");
+		out.print("\nPlease choose from the above site options (or enter 0 to cancel) >>> ");
 		out.flush();
 	}
-
-
 }

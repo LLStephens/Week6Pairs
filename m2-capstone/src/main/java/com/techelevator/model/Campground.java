@@ -64,6 +64,6 @@ public class Campground {
 	}
 	@Override
 	public String toString() {
-		return (String.format("%-25s %-15s %-15s %-10s", name , openingMonth, closingMonth, currency.format(dailyFee)));
+		return (String.format("%-25s %-15s %-15s %-15s", name , openingMonth, closingMonth, currency.format(dailyFee)));
 	}
 }
