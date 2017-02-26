@@ -48,9 +48,7 @@ public class JDBCDepartmentDAOIntegrationTest {
 	
 	@Test
 	public void created_department_has_correct_name() {
-
 		String departmentName = "Marketing";
-
 		Department savedDepartment = dao.createDepartment(departmentName);
 		
 		assertNotNull(savedDepartment);
@@ -90,11 +88,8 @@ public class JDBCDepartmentDAOIntegrationTest {
 		String newName = "Money";
 
 		Department savedDepartment = dao.createDepartment(departmentName);
-		
 		Long departmentId = savedDepartment.getId();
-		
 		dao.updateDepartmentName(departmentId, newName);
-		
 		Department updatedDepartment = dao.getDepartmentById(departmentId);
 		
 		assertNotNull(updatedDepartment);

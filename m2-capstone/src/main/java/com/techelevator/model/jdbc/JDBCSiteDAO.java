@@ -23,15 +23,37 @@ public class JDBCSiteDAO implements SiteDAO {
 	}
 
 	@Override
-	public Site createSite(String siteName) {
-		// TODO Auto-generated method stub
-		return null;
+	public void createSite(Site newSite) {
+		String sqlCreateSite = "insert into site "+
+								"(site_id, campground_id, site_number, max_occupancy, accessible, max_rv_length, utilities) "+
+								"values (?,?,?, ?, ?, ?, ?)";
+		newSite.setSiteId(getNextSiteId());
+		jdbcTemplate.update(sqlCreateSite, newSite.getSiteId(), newSite.getCampgroundId(), newSite.getSiteNumber(), newSite.getMaxOccupancy(), newSite.getIsAccessible(), newSite.getMaxRvLength(), newSite.getIsUtilities());
+
+	}
+	
+	@Override
+	public Site getSiteById(int siteId) {
+		String sqlGetSiteById = "select * from site where site_id = ?";
+		SqlRowSet results = jdbcTemplate.queryForRowSet(sqlGetSiteById, siteId);
+		if(results.next()){
+			Site site = mapRowToSite(results);
+			return site;
+		} else {
+			return null;
+		}
 	}
 
 	@Override
 	public List<Site> getAllSites() {
-		// TODO Auto-generated method stub
-		return null;
+		List<Site> site = new ArrayList<>();
+		String sqlGetAllSites = "select * from site";
+		SqlRowSet results = jdbcTemplate.queryForRowSet(sqlGetAllSites);
+		while(results.next()) {
+			Site theSite = mapRowToSite(results);
+			site.add(theSite);
+		}
+		return site;
 	}
 	
 	@Override
@@ -90,32 +112,30 @@ public class JDBCSiteDAO implements SiteDAO {
 	}
 
 	@Override
-	public List<Site> searchSiteByName(String nameSearch) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Site getSiteById(int siteId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void updateSiteName(int siteId, String siteName) {
-		// TODO Auto-generated method stub
-		
+	public void updateSiteMaxOccupancy(int siteId, int maxOccupancy) {
+		String sqlUpdateSiteMaxOccupancy = "Update site set max_occupancy = ? where site_id = ?";
+		jdbcTemplate.update(sqlUpdateSiteMaxOccupancy, maxOccupancy, siteId);
 	}
 
 	@Override
 	public void deleteSiteById(int siteId) {
-		// TODO Auto-generated method stub
-		
+		String sqlRemoveSite = "DELETE FROM site WHERE site_id = ?";
+		jdbcTemplate.update(sqlRemoveSite, siteId);		
 	}
+	
+	private int getNextSiteId() {
+		SqlRowSet nextIdResult = jdbcTemplate.queryForRowSet("SELECT nextval('site_site_id_seq')");
+		if(nextIdResult.next()) {
+			return nextIdResult.getInt(1);
+		} else {
+			throw new RuntimeException("Something went wrong while getting an id for the new site");
+		}
+	}
+	
 	private Site mapRowToSite(SqlRowSet results) {
 		Site theSite;
 		theSite = new Site();
-		theSite.setSiteId(results.getString("site_id").toString());
+		theSite.setSiteId(results.getInt("site_id"));
 		theSite.setCampgroundId(results.getInt("campground_id"));
 		theSite.setSiteNumber(results.getInt("site_number"));
 		theSite.setMaxOccupancy(results.getInt("max_occupancy"));

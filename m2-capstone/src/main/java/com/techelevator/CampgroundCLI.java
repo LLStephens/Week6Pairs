@@ -165,7 +165,6 @@ public class CampgroundCLI {
 		}
 		siteChoice = (Site)menu.getSiteChoiceFromOptions(siteList);
 		System.out.println();
-		System.out.println("You have selected: " + siteChoice.getSiteNumber() +  "for " + period.getDays());
 		calculateTotalCost();
 		confirmation();
 	}
@@ -210,6 +209,10 @@ public class CampgroundCLI {
 	    	System.out.println("Invalid date format. Please re-enter.");
 	    	getUserDates();
 	    }
+	    if(departureDate.isBefore(arrivalDate)){
+	    	System.out.println("Invalid date range. Please re-enter.");
+	    	getUserDates();
+	    }
 	    toDate = java.sql.Date.valueOf(departureDate);//arrival date in Date
 		fromDate = java.sql.Date.valueOf(arrivalDate);//departure date in Date
 		period = Period.between(arrivalDate, departureDate );
@@ -221,14 +224,9 @@ public class CampgroundCLI {
 		if (confirmation.equals("y")){
 			
 			String reservationName = menu.getUserInput("Please enter a name for the reservation: ");
-			//THIS IS HOW IT NEEDS TO BE  getSiteId()
-			//reservation = reservationDAO.createReservation(siteChoice.getSiteId(), reservationName, fromDate, toDate);
-			//THIS IS HOW IT IS
-			System.out.println("Site id: " +siteChoice.getSiteId());
-			System.out.println("Site #: " +siteChoice.getSiteNumber());
-			Reservation reservation = reservationDAO.createReservation(siteChoice.getSiteNumber(), reservationName, fromDate, toDate);
-		//	System.out.println("A reservation for " + period.getDays() + " day(s) has been made.  The confirmation number is " +  reservation.getReservationId() + " .");
-			System.out.println("ReservationId: " + reservation.getReservationId());
+			Reservation reservation = reservationDAO.createReservation(siteChoice.getSiteId(), reservationName, fromDate, toDate);
+			System.out.println("A reservation for " + period.getDays() + " day(s) has been made.  The confirmation number is " +  reservation.getReservationId() + ".");
+
 		} else {
 			run();
 		}

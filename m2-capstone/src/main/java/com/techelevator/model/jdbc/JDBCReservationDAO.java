@@ -28,7 +28,7 @@ public class JDBCReservationDAO implements ReservationDAO{
 									+ "values (?, ?, ?, ?)";
 		jdbcTemplate.update(sqlCreateReservation, siteId, reservationName, fromDate, toDate);					
 				
-		return getReservationByName(reservationName).get(0);
+		return getReservationById((getNextReservationId())-1);
 	}
 
 	@Override
@@ -60,8 +60,14 @@ public class JDBCReservationDAO implements ReservationDAO{
 
 	@Override
 	public Reservation getReservationById(int reservationId) {
-		// TODO Auto-generated method stub
-		return null;
+		String sqlGetReservationById = "select * from reservation where reservation_id = ?";
+		SqlRowSet results = jdbcTemplate.queryForRowSet(sqlGetReservationById, reservationId);
+		if(results.next()){
+			Reservation reservation = mapRowToReservation(results);
+			return reservation;
+		} else {
+			return null;
+		}
 	}
 
 	@Override
@@ -72,9 +78,33 @@ public class JDBCReservationDAO implements ReservationDAO{
 
 	@Override
 	public void deleteReservationById(int reservationId) {
-		// TODO Auto-generated method stub
+		String sqlRemoveReservation = "delete from reservation where reservation_id = ?";
+		jdbcTemplate.update(sqlRemoveReservation, reservationId);
 		
 	}
+
+
+	@Override
+	public List<Reservation> getAllReservations() {
+		List<Reservation> res = new ArrayList<>();
+		String sqlGetAllReservations = "select * from reservation";
+		SqlRowSet results = jdbcTemplate.queryForRowSet(sqlGetAllReservations);
+		while(results.next()){
+			Reservation theRes = mapRowToReservation(results);
+			res.add(theRes);
+		}
+		return res;
+	}
+	
+	private int getNextReservationId() {
+		SqlRowSet nextIdResult = jdbcTemplate.queryForRowSet("SELECT nextval('reservation_reservation_id_seq')");
+		if(nextIdResult.next()) {
+			return nextIdResult.getInt(1);
+		} else {
+			throw new RuntimeException("Something went wrong while getting an id for the new reservation");
+		}
+	}
+	
 	
 	private Reservation mapRowToReservation(SqlRowSet results) {
 		Reservation theReservation;
@@ -86,12 +116,5 @@ public class JDBCReservationDAO implements ReservationDAO{
 		theReservation.setToDate(results.getDate("to_date"));
 
 		return theReservation;
-	}
-
-
-	@Override
-	public List<Reservation> getAllReservations() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }

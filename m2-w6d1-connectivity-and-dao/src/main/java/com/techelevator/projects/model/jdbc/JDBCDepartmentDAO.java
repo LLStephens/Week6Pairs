@@ -62,7 +62,7 @@ public class JDBCDepartmentDAO implements DepartmentDAO {
 	@Override
 	public Department createDepartment(String departmentName) {
 		String sqlCreateDepartment = "INSERT into department " +
-				" (name) VALUES (?)";	
+				" name VALUES ?";	
 		jdbcTemplate.update(sqlCreateDepartment, departmentName);
 	
 		return searchDepartmentsByName(departmentName).get(0);

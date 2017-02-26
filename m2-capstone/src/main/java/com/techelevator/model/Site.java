@@ -1,7 +1,7 @@
 package com.techelevator.model;
 
 public class Site {
-	private String siteId;
+	private int siteId;
 	private int campgroundId;
 	private int siteNumber;
 	private int maxOccupancy;
@@ -9,10 +9,10 @@ public class Site {
 	private int maxRvLength;
 	private boolean utilities;
 		
-	public String getSiteId() {
+	public int getSiteId() {
 		return siteId;
 	}
-	public void setSiteId(String siteId) {
+	public void setSiteId(int siteId) {
 		this.siteId = siteId;
 	}
 	public int getCampgroundId() {
@@ -56,7 +56,17 @@ public class Site {
 	public String toString() {
 		return (String.format("%-15s %-10s %5s %5s %15s ", siteNumber , maxOccupancy, accessible, maxRvLength, utilities));
 	}
-	
+	@Override
+	public boolean equals(Object other) {
+		if(other == null) {
+			return false;
+		} else if(!(other instanceof Site)) {
+			return false;
+		} else {
+			Site otherSite = (Site)other;
+			return this.siteId==(otherSite.siteId) && this.campgroundId==(otherSite.campgroundId);
+		}
+	}
 	
 
 }
