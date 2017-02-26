@@ -128,7 +128,7 @@ public class CampgroundCLI {
 	private void handleCampgroundSiteList() {
 		List<Campground> allCampgrounds = campgroundDAO.getAllCampgrounds();
 		if(allCampgrounds.size() > 0) {
-			siteList = siteDAO.getSiteByAvailabilityPerCampground(campgroundChoice.getCamgroundId(), fromDate, toDate);
+			siteList = siteDAO.getSiteByAvailabilityPerCampground(campgroundChoice.getCampgroundId(), fromDate, toDate);
 			siteMenu();
 		} else {
 			System.out.println("\n*** No results ***");

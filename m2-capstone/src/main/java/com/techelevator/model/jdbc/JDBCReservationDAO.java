@@ -72,7 +72,10 @@ public class JDBCReservationDAO implements ReservationDAO{
 
 	@Override
 	public void updateReservationName(int reservationId, String reservationName) {
-		// TODO Auto-generated method stub
+		String sqlUpdateReservationName = "UPDATE reservation " +
+											"SET name = ? " +
+											"WHERE reservation_id = ?";
+		jdbcTemplate.update(sqlUpdateReservationName, reservationName, reservationId);
 		
 	}
 
@@ -104,7 +107,6 @@ public class JDBCReservationDAO implements ReservationDAO{
 			throw new RuntimeException("Something went wrong while getting an id for the new reservation");
 		}
 	}
-	
 	
 	private Reservation mapRowToReservation(SqlRowSet results) {
 		Reservation theReservation;

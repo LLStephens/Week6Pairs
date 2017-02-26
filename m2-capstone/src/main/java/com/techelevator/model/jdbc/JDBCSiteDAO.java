@@ -59,7 +59,7 @@ public class JDBCSiteDAO implements SiteDAO {
 	@Override
 	public List<Site> getSitesByParkId(int parkId){
 		ArrayList<Site> site = new ArrayList();
-		String sqlGetSitesByParkId = "Select * from site where park_id = ?";
+		String sqlGetSitesByParkId = "select * from site where campground_id in (select campground_id from campground where park_id = ?)";
 		SqlRowSet results = jdbcTemplate.queryForRowSet(sqlGetSitesByParkId, parkId);
 		while(results.next()){
 			Site theSite = mapRowToSite(results);
@@ -110,6 +110,8 @@ public class JDBCSiteDAO implements SiteDAO {
 		}
 		return site;
 	}
+	
+	
 
 	@Override
 	public void updateSiteMaxOccupancy(int siteId, int maxOccupancy) {

@@ -15,6 +15,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 
+import com.techelevator.model.jdbc.JDBCCampgroundDAO;
+import com.techelevator.model.jdbc.JDBCParkDAO;
 import com.techelevator.model.jdbc.JDBCReservationDAO;
 import com.techelevator.model.jdbc.JDBCSiteDAO;
 
@@ -22,6 +24,9 @@ import com.techelevator.model.jdbc.JDBCSiteDAO;
 public class ReservationDAOIntegrationTest {
 	private static SingleConnectionDataSource dataSource;
 	private ReservationDAO dao;
+	private CampgroundDAO campDAO;
+	private ParkDAO parkDAO;
+	private SiteDAO siteDAO;
 	private DateFormat formatter = new SimpleDateFormat("MM/dd/yyyy"); 
 
 	
@@ -42,6 +47,9 @@ public class ReservationDAOIntegrationTest {
 	@Before
 	public void setup() {
 		dao = new JDBCReservationDAO(dataSource);
+		campDAO = new JDBCCampgroundDAO(dataSource);
+		parkDAO = new JDBCParkDAO(dataSource);
+		siteDAO = new JDBCSiteDAO(dataSource);
 	}
 	
 	@After
@@ -50,16 +58,18 @@ public class ReservationDAOIntegrationTest {
 	}
 	
 	@Test
-	public void finds_new_reservation_after_being_created() throws ParseException{
+	public void finds_new_reservation_by_id_after_being_created() throws ParseException{
 		String dateStr = "06/27/2007"; 
 		String dateStr2 = "07/27/2007"; 
 		Date fromDate = (Date)formatter.parse(dateStr);
 		Date toDate = (Date)formatter.parse(dateStr2);
 		Reservation res = new Reservation();
 		res = dao.createReservation(400, "Ruby", fromDate, toDate);
+		Reservation newRes = dao.getReservationById(res.getReservationId());
 		
 		assertNotNull(res);
 		assertEquals("Ruby", res.getName());
+		assertEquals(res.getReservationId(), newRes.getReservationId());
 	}
 	
 	@Test
@@ -70,34 +80,67 @@ public class ReservationDAOIntegrationTest {
 		Date toDate = (Date)formatter.parse(dateStr2);
 		Reservation res = new Reservation();
 		res = dao.createReservation(400, "Ruby", fromDate, toDate);
+		
+		assertNotNull(res.getReservationId());
+				
 		dao.deleteReservationById(res.getReservationId());
 		List <Reservation> results = dao.getAllReservations();
 		
 		assertFalse(results.contains(res));
+	}
+	
+	@Test
+	public void gets_reservation_by_name_after_updating_name () throws ParseException {
+		String dateStr = "06/27/2007"; 
+		String dateStr2 = "07/27/2007"; 
+		Date fromDate = (Date)formatter.parse(dateStr);
+		Date toDate = (Date)formatter.parse(dateStr2);
+		Reservation res = new Reservation();
+		res = dao.createReservation(400, "Ruby", fromDate, toDate);
+		dao.updateReservationName(res.getReservationId(), "Kiki");
+		List <Reservation> results = dao.getReservationByName("Kiki");
+		List <Reservation> fullResults = dao.getAllReservations();
+		
+		assertNotNull(res);
+		assertEquals("Kiki", results.get(0).getName());
+		assertFalse(fullResults.contains("Ruby"));
 		
 	}
-	
-	private Reservation getReservation(int reservationId, int siteId, String name, Date fromDate, Date toDate, Date createDate){
-		Reservation theReservation = new Reservation();
-		theReservation.setSiteId(siteId);
-		theReservation.setName(name);
-		theReservation.setFromDate(fromDate);
-		theReservation.setToDate(toDate);
-		theReservation.setCreateDate(createDate);
-		return theReservation;
-	}
-	
-	private void assertReservationsAreEqual(Reservation expected, Reservation actual){
-		assertEquals(expected.getReservationId(), actual.getReservationId());
-		assertEquals(expected.getSiteId(), actual.getSiteId());
-		assertEquals(expected.getName(), actual.getName());
-		assertEquals(expected.getFromDate(), actual.getFromDate());
-		assertEquals(expected.getToDate(), actual.getToDate());
-		assertEquals(expected.getCreateDate(), actual.getCreateDate());
+
+	@Test 
+	public void gets_multiple_reservations() throws ParseException{
+		String dateStr = "06/27/2007"; 
+		String dateStr2 = "07/27/2007"; 
+		Date fromDate = (Date)formatter.parse(dateStr);
+		Date toDate = (Date)formatter.parse(dateStr2);
+		Reservation res = new Reservation();
+		Reservation res2 = new Reservation();
+		res = dao.createReservation(400, "Ruby", fromDate, toDate);
+		res2 = dao.createReservation(499, "Kiki", fromDate, toDate);
+		List <Reservation> results = dao.getAllReservations();
 		
+		assertNotNull(results);
+		assertTrue(results.size() >=2);
 	}
 	
-	
+	public void get_all_reservations_given_the_parkId() throws ParseException{
+		String dateStr = "06/27/2007"; 
+		String dateStr2 = "07/27/2007"; 
+		Date fromDate = (Date)formatter.parse(dateStr);
+		Date toDate = (Date)formatter.parse(dateStr2);
+		Reservation res = new Reservation();
+		Reservation res2 = new Reservation();
+		//site = 621 camp = 7 park = 3
+		res = dao.createReservation(621, "Ruby", fromDate, toDate);
+		//site = 1 camp = 1 park = 1
+		res2 = dao.createReservation(1, "Kiki", fromDate, toDate);
+		Park park = parkDAO.getParkBySiteId(res.getSiteId());
+		List <Reservation> results = dao.getAllReservationsForPark(park.getParkId());
+		
+		assertTrue(results.contains(res));
+		assertFalse(results.contains(res2));
+	}
+
 	
 	
 }

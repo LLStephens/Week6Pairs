@@ -15,12 +15,14 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 
+import com.techelevator.model.jdbc.JDBCParkDAO;
 import com.techelevator.model.jdbc.JDBCReservationDAO;
 import com.techelevator.model.jdbc.JDBCSiteDAO;
 
 public class SiteDAOIntegrationTest {
 	private static SingleConnectionDataSource dataSource;
 	private SiteDAO dao;
+	private ParkDAO parkDAO;
 	
 	
 	@BeforeClass
@@ -40,6 +42,7 @@ public class SiteDAOIntegrationTest {
 	@Before
 	public void setup() {
 		dao = new JDBCSiteDAO(dataSource);
+		parkDAO = new JDBCParkDAO(dataSource);
 	}
 	
 	@After
@@ -82,6 +85,22 @@ public class SiteDAOIntegrationTest {
 		assertNotNull(results);
 		assertEquals(newSite.getCampgroundId(), results.get(0).getCampgroundId());	
 		assertTrue(results.contains(newSite));
+	}
+	
+	@Test
+	public void gets_sites_given_park_id () {
+		//campground 7, park 3
+		Site newSite = getSite(7,77, 99, true, 94, false);
+		Site newSite2 = getSite(7,78, 99, true, 94, false);
+		dao.createSite(newSite);
+		dao.createSite(newSite2);
+		
+		Park park = parkDAO.getParkBySiteId(newSite.getSiteId());
+		Park park2 = parkDAO.getParkBySiteId(newSite2.getSiteId());
+		
+		List <Site> results = dao.getSitesByParkId(park.getParkId());
+		assertTrue(results.contains(newSite));
+		assertTrue(results.contains(newSite2));
 	}
 	
 	@Test  //test works if JDBCSiteDAO limit of 5 removed

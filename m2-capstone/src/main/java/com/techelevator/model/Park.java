@@ -11,6 +11,7 @@ public class Park {
 	private int area;
 	private int visitors;
 	private String description;
+	
 	public int getParkId() {
 		return parkId;
 	}
@@ -56,6 +57,17 @@ public class Park {
 	@Override
 	public String toString() {
 		return name;
+	}
+	@Override
+	public boolean equals(Object other) {
+		if(other == null) {
+			return false;
+		} else if(!(other instanceof Park)) {
+			return false;
+		} else {
+			Park otherPark = (Park)other;
+			return this.parkId==(otherPark.parkId) ;
+		}
 	}
 	
 }

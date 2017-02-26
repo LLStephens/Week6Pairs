@@ -1,5 +1,6 @@
 package com.techelevator.model.jdbc;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,6 +11,7 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 
 import com.techelevator.model.Campground;
 import com.techelevator.model.CampgroundDAO;
+import com.techelevator.model.Reservation;
 
 
 public class JDBCCampgroundDAO implements CampgroundDAO {
@@ -20,9 +22,11 @@ public class JDBCCampgroundDAO implements CampgroundDAO {
 	}
 
 	@Override
-	public Campground createCampground(String campgroundName) {
-		// TODO Auto-generated method stub
-		return null;
+	public Campground createCampground(int parkId, String name, String openFromMm, String openToMm, BigDecimal dailyFee) {
+		String sqlCreateCampground = "insert into campground (park_id, name, open_from_mm, open_to_mm, daily_fee) " +
+									"values (?, ?, ?, ?, ?)";
+		jdbcTemplate.update(sqlCreateCampground, parkId, name, openFromMm, openToMm, dailyFee);
+		return getCampgroundById(getNextCampgroundId()-1);
 	}
 
 	@Override
@@ -51,8 +55,14 @@ public class JDBCCampgroundDAO implements CampgroundDAO {
 
 	@Override
 	public List<Campground> searchCampgroundByName(String nameSearch) {
-		// TODO Auto-generated method stub
-		return null;
+		ArrayList<Campground> camp = new ArrayList<>();
+		String sqlGetCampgroundByName = "Select * from campground where name = ?";
+		SqlRowSet results = jdbcTemplate.queryForRowSet(sqlGetCampgroundByName, nameSearch);
+		while(results.next()){
+			Campground theCamp = mapRowToCampground(results);
+			camp.add(theCamp);
+		}
+		return camp;
 	}
 
 	@Override
@@ -69,14 +79,26 @@ public class JDBCCampgroundDAO implements CampgroundDAO {
 
 	@Override
 	public void updateCampgroundName(int campgroundId, String campgroundName) {
-		// TODO Auto-generated method stub
-		
+		String sqlUpdateCampName = "UPDATE campground " +
+				"SET name = ? " +
+				"WHERE campground_id = ?";
+		jdbcTemplate.update(sqlUpdateCampName, campgroundName, campgroundId);
 	}
 
 	@Override
 	public void deleteCampgroundById(int campgroundId) {
-		// TODO Auto-generated method stub
+		String sqlRemoveCampground = "delete from campground where campground_id = ?";
+		jdbcTemplate.update(sqlRemoveCampground, campgroundId);
 		
+	}
+	
+	private int getNextCampgroundId() {
+		SqlRowSet nextIdResult = jdbcTemplate.queryForRowSet("Select nextval('campground_campground_id_seq')");
+		if(nextIdResult.next()) {
+			return nextIdResult.getInt(1);
+		} else {
+			throw new RuntimeException("Something went wrong while getting an id for the new camp");
+		}
 	}
 	
 	private Campground mapRowToCampground(SqlRowSet results) {

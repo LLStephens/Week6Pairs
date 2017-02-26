@@ -15,7 +15,7 @@ public class Campground {
 
 
 	
-	public int getCamgroundId() {
+	public int getCampgroundId() {
 		return campgroundId;
 	}
 	

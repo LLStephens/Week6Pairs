@@ -1,11 +1,12 @@
 package com.techelevator.model;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 
 public interface CampgroundDAO {
 	// Create
-	public Campground createCampground(String campgroundName);
+	public 	Campground createCampground(int parkId, String name, String openFromMm, String openToMm, BigDecimal dailyFee);
 	
 	// Read
 	public List<Campground> getAllCampgrounds();
@@ -19,6 +20,7 @@ public interface CampgroundDAO {
 	
 	// Delete
 	public void deleteCampgroundById(int campgroundId);
+
 
 }
 

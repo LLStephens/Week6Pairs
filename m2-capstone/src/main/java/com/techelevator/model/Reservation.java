@@ -65,5 +65,16 @@ public class Reservation {
 		return name;
 //		return (name + reservationId + siteId + fromDate +  toDate + createDate);
 	}
+	@Override
+	public boolean equals(Object other) {
+		if(other == null) {
+			return false;
+		} else if(!(other instanceof Reservation)) {
+			return false;
+		} else {
+			Reservation otherRes = (Reservation)other;
+			return this.siteId==(otherRes.siteId) && this.reservationId==(otherRes.reservationId) &&this.name==(otherRes.name);
+		}
+	}
 	
 }
